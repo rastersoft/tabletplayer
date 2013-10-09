@@ -1,0 +1,19 @@
+### AutoVala Project ###
+autovala_version: 5
+project_name: tabletplayer
+vala_version: 0.20
+
+*po: po
+
+*data: data/local
+
+*doc: doc
+
+vala_binary: src/tabletplayer
+vala_check_package: gdk-x11-3.0
+vala_check_package: gstreamer-0.10
+vala_package: gstreamer-interfaces-0.10
+*vala_check_package: glib-2.0
+*vala_check_package: gtk+-3.0
+*vala_source: tabletplayer.vala
+

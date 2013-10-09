@@ -25,6 +25,7 @@ find_package(PkgConfig)
 pkg_check_modules(DEPS REQUIRED
 	gdk-x11-3.0
 	gstreamer-0.10
+	gstreamer-interfaces-0.10
 	glib-2.0
 	gtk+-3.0
 )

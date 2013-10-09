@@ -26,7 +26,9 @@ public class VideoPlayer : Gtk.Window {
     private DrawingArea drawing_area;
     private Pipeline pipeline;
     private Element filesrc;
-    private Element sink;
+    private Element decoder;
+    private Element videosink;
+    private Element audiosink;
     private ulong xid;
     
 	public VideoPlayer () {
@@ -56,25 +58,31 @@ public class VideoPlayer : Gtk.Window {
         add (vbox);
     }
 
-	public void OnDynamicPad(Element element,Pad new_pad) {
-		Gst.Caps new_pad_caps = null;//new_pad.query_caps (null);
+	public void OnDynamicPad(Gst.Element element,Gst.Pad new_pad) {
+		var new_pad_caps = new_pad.get_caps();
 		weak Gst.Structure new_pad_struct = new_pad_caps.get_structure (0);
 		string new_pad_type = new_pad_struct.get_name ();
-		GLib.stdout.printf("Pad de tipo %s\n",new_pad_type);
-		
-        //Pad opad = audiocon.get_static_pad("sink");
-        //new_pad.link(opad);
+		if(new_pad_type.has_prefix("video/")) {
+			Pad opad=this.videosink.get_static_pad("sink");
+			new_pad.link(opad);
+		}
+		if(new_pad_type.has_prefix("audio/")) {
+			Pad opad=this.audiosink.get_static_pad("sink");
+			new_pad.link(opad);
+		}
     }
 
     private void setup_gst_pipeline (string location) {
         this.pipeline = new Pipeline ("mypipeline");
         this.filesrc = ElementFactory.make ("filesrc", "filesource");
         this.filesrc.set("location",location);
-        var decoder = ElementFactory.make("decodebin","decoder");
-        decoder.pad_added.connect(OnDynamicPad);
-        this.sink = ElementFactory.make ("xvimagesink", "sink");
-        this.pipeline.add_many (this.filesrc, this.sink,decoder);
-        this.filesrc.link (decoder);
+        this.decoder = ElementFactory.make("decodebin","decoder");
+        this.decoder.pad_added.connect(OnDynamicPad);
+        this.videosink = ElementFactory.make("xvimagesink", "videosink");
+        this.videosink.set("force-aspect-ratio",true);
+        this.audiosink = ElementFactory.make("autoaudiosink","audiosink");
+        this.pipeline.add_many (this.filesrc, this.videosink,this.audiosink,this.decoder);
+        this.filesrc.link(this.decoder);
     }
 
     private void on_realize() {
@@ -82,7 +90,7 @@ public class VideoPlayer : Gtk.Window {
     }
 
     private void on_play () {
-        var xoverlay = this.sink as Gst.XOverlay;
+        var xoverlay = this.videosink as Gst.XOverlay;
         xoverlay.set_xwindow_id (this.xid);
         this.pipeline.set_state (State.PLAYING);
     }

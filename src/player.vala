@@ -66,7 +66,7 @@ public class VideoPlayer : Gtk.Window {
 		this.is_playing=false;
 		this.on_play();
 
-		this.timer=GLib.Timeout.add(500,this.timer_func);
+		this.timer=GLib.Timeout.add(1000,this.timer_func);
 	}
 
 	private void create_widgets () {
@@ -112,7 +112,10 @@ public class VideoPlayer : Gtk.Window {
 		int64 pos=-1;
 		Gst.Format fmt = Gst.Format.TIME;
 		if (this.pipeline.query_position(ref fmt,out pos)) {
-			this.pipeline.seek_simple(Gst.Format.TIME,Gst.SeekFlags.FLUSH|Gst.SeekFlags.KEY_UNIT,pos+20*Gst.SECOND);
+			pos+=20*Gst.SECOND;
+			if (pos<this.duration) {
+				this.pipeline.seek_simple(Gst.Format.TIME,Gst.SeekFlags.FLUSH|Gst.SeekFlags.KEY_UNIT,pos);
+			}
 		}
 	}
 

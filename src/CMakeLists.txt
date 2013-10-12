@@ -51,6 +51,8 @@ set(VALA_PACKAGES
 
 set(APP_SOURCES
 	${CMAKE_CURRENT_BINARY_DIR}/Config.vala
+	interface.vala
+	player.vala
 	tabletplayer.vala
 )
 

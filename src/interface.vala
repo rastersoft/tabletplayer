@@ -16,31 +16,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. */
  
-using GLib;
 using Gtk;
+using GLib;
 
-int main(string[] args) {
-
-	Gst.init (ref args);
-    Gtk.init (ref args);
-
-	VideoPlayer player;
-	UserInterface iface=new UserInterface();
-
-	do {
-		var retval=iface.run();
-		if (retval==null) {
-			break;
-		} else {
-			player = new VideoPlayer (retval);
-			player.destroy.connect( (widget)=> {
-				player.on_stop();
-			});
-		    Gtk.main ();
-		    player.destroy();
-		    player=null;
+public class UserInterface : Gtk.Window {
+ 
+	private Gtk.FileChooserDialog filer;
+ 
+ 	public UserInterface() {
+ 		this.filer=new Gtk.FileChooserDialog(_("Select movie"),null, Gtk.FileChooserAction.OPEN,_("_Cancel"),Gtk.ResponseType.CANCEL,_("_Open"),Gtk.ResponseType.ACCEPT);
+ 	}
+ 
+	public string ?run() {
+		this.filer.show_all();
+		var retval=this.filer.run();
+		this.filer.hide();
+		if (retval==Gtk.ResponseType.CANCEL) {
+			return null;
 		}
-	} while(true);
-
-    return 0;
+		
+		string path;
+		if(this.filer.get_current_folder()!=null) {
+			path=GLib.Path.build_path(this.filer.get_current_folder(),this.filer.get_filename());
+		} else {
+			path=this.filer.get_filename();
+		}
+		return (path);
+	}
+ 
 }

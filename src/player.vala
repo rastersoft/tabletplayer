@@ -53,9 +53,6 @@ public class VideoPlayer : Gtk.Window {
 			this.is_started=true;
 			return true;
 		}
-		if(this.is_playing==false) {
-			return true;
-		}
 		return true;
 		Gst.Format fmt = Gst.Format.TIME;
 		this.pipeline.query_duration(ref fmt,out this.duration);
@@ -93,6 +90,7 @@ public class VideoPlayer : Gtk.Window {
 		create_widgets ();
 		setup_gst_pipeline(video);
 		this.show_all();
+		this.set_xv();
 		this.timer=GLib.Timeout.add(1500,this.timer_func);
 	}
 

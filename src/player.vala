@@ -84,6 +84,7 @@ public class VideoPlayer : Gtk.Window {
 		this.is_playing=false;
 		create_widgets ();
 		setup_gst_pipeline(video);
+		this.show_all();
 		this.timer=GLib.Timeout.add(500,this.timer_func);
 	}
 
@@ -120,7 +121,6 @@ public class VideoPlayer : Gtk.Window {
 		this.time_text.set_justify(Gtk.Justification.CENTER);
 		controlbox.pack_start (this.time_text, false, true, 10);
 		this.add(playerbox);
-		this.show_all();
 	}
 
 	public void on_forward() {
@@ -158,10 +158,12 @@ public class VideoPlayer : Gtk.Window {
 		weak Gst.Structure new_pad_struct = new_pad_caps.get_structure (0);
 		string new_pad_type = new_pad_struct.get_name ();
 		if(new_pad_type.has_prefix("video/")) {
+			GLib.stdout.printf("Linking video\n");
 			Pad opad=this.videosink.get_static_pad("sink");
 			new_pad.link(opad);
 		}
 		if(new_pad_type.has_prefix("audio/")) {
+			GLib.stdout.printf("Linking audio\n");
 			Pad opad=this.audiosink.get_static_pad("sink");
 			new_pad.link(opad);
 		}
@@ -178,24 +180,14 @@ public class VideoPlayer : Gtk.Window {
 		}
 	}
 
-	private void bus_msg(Gst.Message msg) {
-		GLib.stdout.printf("Mensaje\n");
-	}
-
-	private void bus_msg2(Gst.Message msg) {
-		GLib.stdout.printf("Mensaje 2\n");
-	}
-
 	private void setup_gst_pipeline (string location) {
 		this.pipeline = new Pipeline ("mypipeline");
 		this.bus = this.pipeline.get_bus();
-		this.bus.message.connect(this.bus_msg);
-		this.bus.sync_message.connect(this.bus_msg2);
 		this.filesrc = ElementFactory.make ("filesrc", "filesource");
 		this.filesrc.set("location",location);
 		this.decoder = ElementFactory.make("decodebin","decoder");
 		this.decoder.pad_added.connect(OnDynamicPad);
-		this.videosink = ElementFactory.make("xvimagesink", "videosink");
+		this.videosink = ElementFactory.make("ximagesink", "videosink");
 		this.videosink.set("force-aspect-ratio",true);
 		this.audiosink = ElementFactory.make("autoaudiosink","audiosink");
 		this.pipeline.add_many (this.filesrc, this.videosink,this.audiosink,this.decoder);

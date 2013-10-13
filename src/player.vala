@@ -167,6 +167,8 @@ public class VideoPlayer : Gtk.Window {
 	}
 
 	private void on_realize() {
+		var newcursor=new Gdk.Cursor(Gdk.CursorType.BLANK_CURSOR);
+		this.get_window().set_cursor(newcursor);
 		this.xid = (ulong)Gdk.X11Window.get_xid(this.drawing_area.get_window());
 		string[] argv={};
 		argv+="mplayer";

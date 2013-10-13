@@ -71,6 +71,7 @@ public class VideoPlayer : Gtk.Window {
 		this.length=0;
 		this.pos=0;
 		create_widgets ();
+		this.has_resize_grip=false;
 		this.show_all();
 		this.timer_basetime=8;
 		this.timer_show=this.timer_basetime;

@@ -10,88 +10,57 @@
  *
  * This code is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+ * along with this program.	If not, see <http://www.gnu.org/licenses/>. */
 
 using GLib;
 using Gtk;
-using Gst;
 using Gdk;
+using Posix;
 
 public class VideoPlayer : Gtk.Window {
 
 	private DrawingArea drawing_area;
-	private Pipeline pipeline;
-	private Element filesrc;
-	private Element decoder;
-	private Element videosink;
-	private Element audiosink;
 	private ulong xid;
-	private Box playerbox;
 	private Button play_button;
 	private Button pause_button;
-	private int64 duration;
-	private int64 position;
-	private Gst.Bus bus;
 	private Gtk.Label time_text;
 
-	private bool is_playing;
 	private uint timer;
+	private string movie;
+	private GLib.Pid pid;
+	private int stdinput;
+	private int stdoutput;
+	private int stderror;
 	
-	private bool is_initializated;
-	private bool is_started;
+	IOChannel io_read;
+	IOChannel io_write;
+	
+	private int64 length;
+	private int64 pos;
+
+// switch audio
 
 	public bool timer_func() {
-		if (this.set_xv()) {
-			return true;
-		}
-		if (this.is_started==false) {
-			this.on_play();
-			this.is_started=true;
-			return true;
-		}
-		return true;
-		Gst.Format fmt = Gst.Format.TIME;
-		this.pipeline.query_duration(ref fmt,out this.duration);
-		this.pipeline.query_position(ref fmt,out this.position);
-		int dur2=(int)(duration/Gst.SECOND);
-		int pos2=(int)(position/Gst.SECOND);
-		int dsec=dur2%60;
-		int dmin=(dur2/60)%60;
-		int dhour=dur2/3600;
-		int psec=pos2%60;
-		int pmin=(pos2/60)%60;
-		int phour=pos2/3600;
-		string pos_str="%d:%02d:%02d/%d:%02d:%02d".printf(phour,pmin,psec,dhour,dmin,dsec);
-		this.time_text.set_text(pos_str);
+		size_t v;
+		this.io_write.write_chars((char[])"get_time_length\n".data,out v);
+		this.io_write.write_chars((char[])"get_time_pos\n".data,out v);
+		this.io_write.write_chars((char[])"get_property pause\n".data,out v);
+		this.io_write.flush();
 		return(true);
 	}
 
-	private bool set_xv() {
-		if (this.is_initializated==false) {
-			if (this.xid!=0) {
-				this.is_initializated=true;
-				var xoverlay = this.videosink as Gst.XOverlay;
-				xoverlay.set_xwindow_id(this.xid);
-			}
-			return true;
-		}
-		return false;
-	}
-
 	public VideoPlayer (string video) {
+		this.movie=video;
 		this.xid=0;
-		this.is_initializated=false;
-		this.is_started=false;
-		this.is_playing=false;
+		this.length=0;
+		this.pos=0;
 		create_widgets ();
 		this.show_all();
-		setup_gst_pipeline(video);
-		this.set_xv();
-		this.timer=GLib.Timeout.add(1500,this.timer_func);
+		this.timer=GLib.Timeout.add(500,this.timer_func);
 	}
 
 	private void create_widgets () {
@@ -100,6 +69,8 @@ public class VideoPlayer : Gtk.Window {
 		var playerbox = new Box (Orientation.VERTICAL, 0);
 		this.drawing_area = new DrawingArea ();
 		this.drawing_area.realize.connect(on_realize);
+		this.drawing_area.add_events (Gdk.EventMask.BUTTON_PRESS_MASK);
+		this.drawing_area.button_press_event.connect(this.on_click);
 		playerbox.pack_start (this.drawing_area, true, true, 0);
 
 		play_button = new Button.from_stock(Stock.MEDIA_PLAY);
@@ -112,6 +83,8 @@ public class VideoPlayer : Gtk.Window {
 		avanti.clicked.connect (on_forward);
 		var rewind = new Button.from_stock(Stock.MEDIA_REWIND);
 		rewind.clicked.connect (on_rewind);
+		var audio = new Button.with_label(_("Audio"));
+		audio.clicked.connect (on_audio);
 
 		var bb = new ButtonBox (Orientation.HORIZONTAL);
 		bb.set_layout(Gtk.ButtonBoxStyle.START);
@@ -120,6 +93,7 @@ public class VideoPlayer : Gtk.Window {
 		bb.add (pause_button);
 		bb.add (stop_button);
 		bb.add (avanti);
+		bb.pack_end (audio,false,false,0);
 		var controlbox=new Box (Orientation.HORIZONTAL,0);
 		playerbox.pack_start (controlbox, false, true, 0);
 		controlbox.pack_start (bb, true, true, 0);
@@ -129,100 +103,101 @@ public class VideoPlayer : Gtk.Window {
 		this.add(playerbox);
 	}
 
-	public void on_forward() {
-		if (is_playing==false) {
-			return;
+	private bool on_click(Gdk.EventButton event) {
+
+		GLib.stdout.printf("Click\n");
+		return true;
+	}
+
+	private bool gio_in(IOChannel gio, IOCondition condition) {
+		IOStatus ret;
+		string msg="";
+		size_t len;
+
+		if((condition & IOCondition.HUP) == IOCondition.HUP) {
+			return false;
 		}
-		int64 pos=-1;
-		Gst.Format fmt = Gst.Format.TIME;
-		if (this.pipeline.query_position(ref fmt,out pos)) {
-			pos+=20*Gst.SECOND;
-			if (pos<this.duration) {
-				this.pipeline.seek_simple(Gst.Format.TIME,Gst.SeekFlags.FLUSH|Gst.SeekFlags.KEY_UNIT,pos);
+
+		try {
+			string out_msg;
+			ret = gio.read_line(out out_msg, out len, null);
+			msg=out_msg.replace("\n","");
+		}
+		catch(IOChannelError e) {
+		}
+		catch(ConvertError e) {
+		}
+		if(msg.has_prefix("ANS_LENGTH=")) {
+			this.length=int64.parse(msg.substring(11));
+		} else if(msg.has_prefix("ANS_TIME_POSITION=")) {
+			this.pos=int64.parse(msg.substring(18));
+		} else if(msg.has_prefix("ANS_pause=")) {
+			if(msg.substring(10)=="no") {
+				this.pause_button.show();
+				this.play_button.hide();
+			} else {
+				this.pause_button.hide();
+				this.play_button.show();
 			}
+			int dsec=(int)(this.length%60);
+			int dmin=(int)((this.length/60)%60);
+			int dhour=(int)(this.length/3600);
+			int psec=(int)(this.pos%60);
+			int pmin=(int)((this.pos/60)%60);
+			int phour=(int)(this.pos/3600);
+			string pos_str="%d:%02d:%02d/%d:%02d:%02d".printf(phour,pmin,psec,dhour,dmin,dsec);
+			this.time_text.set_text(pos_str);
 		}
-	}
-
-	public void on_rewind() {
-		if (is_playing==false) {
-			return;
-		}
-		int64 pos=-1;
-		Gst.Format fmt;
-		fmt = Gst.Format.TIME;
-		if (this.pipeline.query_position(ref fmt,out pos)) {
-			pos-=20*Gst.SECOND;
-			if (pos<0) {
-				pos=0;
-			}
-			this.pipeline.seek_simple(Gst.Format.TIME,Gst.SeekFlags.FLUSH|Gst.SeekFlags.KEY_UNIT,pos);
-		}
-	}
-
-	public void OnDynamicPad(Gst.Element element,Gst.Pad new_pad) {
-		var new_pad_caps = new_pad.get_caps();
-		weak Gst.Structure new_pad_struct = new_pad_caps.get_structure (0);
-		string new_pad_type = new_pad_struct.get_name ();
-		if(new_pad_type.has_prefix("video/")) {
-			GLib.stdout.printf("Linking video\n");
-			Pad opad=this.videosink.get_static_pad("sink");
-			new_pad.link(opad);
-		}
-		if(new_pad_type.has_prefix("audio/")) {
-			GLib.stdout.printf("Linking audio\n");
-			Pad opad=this.audiosink.get_static_pad("sink");
-			new_pad.link(opad);
-		}
-		this.set_iface();
-	}
-
-	private void set_iface() {
-		if(this.is_playing) {
-			this.play_button.hide();
-			this.pause_button.show();
-		} else {
-			this.play_button.show();
-			this.pause_button.hide();
-		}
-	}
-
-	private void setup_gst_pipeline (string location) {
-		this.pipeline = new Pipeline ("mypipeline");
-		this.bus = this.pipeline.get_bus();
-		this.filesrc = ElementFactory.make ("filesrc", "filesource");
-		this.filesrc.set("location",location);
-		this.decoder = ElementFactory.make("decodebin","decoder");
-		this.decoder.pad_added.connect(OnDynamicPad);
-		this.videosink = ElementFactory.make("xvimagesink", "videosink");
-		this.videosink.set("force-aspect-ratio",true);
-		this.audiosink = ElementFactory.make("autoaudiosink","audiosink");
-		this.pipeline.add_many (this.filesrc, this.videosink,this.audiosink,this.decoder);
-		this.filesrc.link(this.decoder);
+		return true;
 	}
 
 	private void on_realize() {
 		this.xid = (ulong)Gdk.X11Window.get_xid(this.drawing_area.get_window());
+		string[] argv={};
+		argv+="mplayer";
+		argv+="-fs";
+		argv+="-quiet";
+		argv+="-slave";
+		argv+="-wid";
+		argv+="%u".printf((uint)this.xid);
+		argv+="%s".printf(this.movie);
+		GLib.Process.spawn_async_with_pipes(null,argv,null,GLib.SpawnFlags.SEARCH_PATH,null,out this.pid, out this.stdinput, out this.stdoutput, out this.stderror);
+		this.io_write = new IOChannel.unix_new(this.stdinput);
+		this.io_read = new IOChannel.unix_new(this.stdoutput);
+		if(!(io_read.add_watch(IOCondition.IN | IOCondition.HUP, gio_in) != 0)) {
+			print("Cannot add watch on IOChannel!\n");
+			return;
+		}
 	}
 
 	public void on_play () {
-		if(this.is_playing) {
-			this.pipeline.set_state (State.PAUSED);
-			GLib.stdout.printf("Pausing\n");
-			this.is_playing=false;
-		} else {
-			this.pipeline.set_state (State.PLAYING);
-			GLib.stdout.printf("Playing\n");
-			this.is_playing=true;
-		}
-		this.set_iface();
+		size_t v;
+		this.io_write.write_chars((char[])"pause\n".data,out v);
+		this.io_write.flush();
 	}
 
 	public void on_stop () {
 		GLib.Source.remove(this.timer);
-		this.pipeline.set_state (State.READY);
-		this.pipeline.set_state (State.NULL);
-		this.hide();
+		size_t v;
+		this.io_write.write_chars((char[])"quit 0\n".data,out v);
 		Gtk.main_quit();
+	}
+
+	public void on_forward() {
+		size_t v;
+		this.io_write.write_chars((char[])"seek +15 0\n".data,out v);
+		this.io_write.flush();
+	}
+
+	public void on_rewind() {
+		size_t v;
+		this.io_write.write_chars((char[])"seek -15 0\n".data,out v);
+		this.io_write.flush();
+	}
+	public void on_audio() {
+		size_t v;
+		this.io_write.write_chars((char[])"switch_audio\n".data,out v);
+		this.io_write.flush();
 	}
 }
 

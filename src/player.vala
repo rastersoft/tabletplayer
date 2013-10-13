@@ -56,6 +56,7 @@ public class VideoPlayer : Gtk.Window {
 		if(this.is_playing==false) {
 			return true;
 		}
+		return true;
 		Gst.Format fmt = Gst.Format.TIME;
 		this.pipeline.query_duration(ref fmt,out this.duration);
 		this.pipeline.query_position(ref fmt,out this.position);

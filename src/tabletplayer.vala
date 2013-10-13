@@ -18,6 +18,7 @@
  
 using GLib;
 using Gtk;
+using Posix;
 
 int main(string[] args) {
 
@@ -32,13 +33,7 @@ int main(string[] args) {
 		if (retval==null) {
 			break;
 		} else {
-			player = new VideoPlayer (retval);
-			player.destroy.connect( (widget)=> {
-				player.on_stop();
-			});
-		    Gtk.main ();
-		    player.destroy();
-		    player=null;
+			Posix.system("gnome-mplayer --fullscreen -q --large_buttons --keep_on_top \"%s\"".printf(retval));
 		}
 	} while(true);
 

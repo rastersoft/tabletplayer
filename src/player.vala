@@ -88,8 +88,8 @@ public class VideoPlayer : Gtk.Window {
 		this.is_started=false;
 		this.is_playing=false;
 		create_widgets ();
-		setup_gst_pipeline(video);
 		this.show_all();
+		setup_gst_pipeline(video);
 		this.set_xv();
 		this.timer=GLib.Timeout.add(1500,this.timer_func);
 	}

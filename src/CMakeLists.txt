@@ -45,6 +45,7 @@ set(VALA_PACKAGES
 	gdk-x11-3.0
 	gstreamer-0.10
 	gstreamer-interfaces-0.10
+	posix
 	glib-2.0
 	gtk+-3.0
 )

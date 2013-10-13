@@ -67,10 +67,12 @@ public class VideoPlayer : Gtk.Window {
 	}
 
 	private bool set_xv() {
-		if ((this.xid!=0)&&(this.is_initializated==false)) {
-			this.is_initializated=true;
-			var xoverlay = this.videosink as Gst.XOverlay;
-			xoverlay.set_xwindow_id(this.xid);
+		if (this.is_initializated==false) {
+			if (this.xid!=0) {
+				this.is_initializated=true;
+				var xoverlay = this.videosink as Gst.XOverlay;
+				xoverlay.set_xwindow_id(this.xid);
+			}
 			return true;
 		}
 		return false;
@@ -82,7 +84,7 @@ public class VideoPlayer : Gtk.Window {
 		this.is_playing=false;
 		create_widgets ();
 		setup_gst_pipeline(video);
-		this.timer=GLib.Timeout.add(1000,this.timer_func);
+		this.timer=GLib.Timeout.add(500,this.timer_func);
 	}
 
 	private void create_widgets () {
@@ -207,9 +209,11 @@ public class VideoPlayer : Gtk.Window {
 	public void on_play () {
 		if(this.is_playing) {
 			this.pipeline.set_state (State.PAUSED);
+			GLib.stdout.printf("Pausing\n");
 			this.is_playing=false;
 		} else {
 			this.pipeline.set_state (State.PLAYING);
+			GLib.stdout.printf("Playing\n");
 			this.is_playing=true;
 		}
 		this.set_iface();

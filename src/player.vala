@@ -28,6 +28,7 @@ public class VideoPlayer : Gtk.Window {
 	private Button play_button;
 	private Button pause_button;
 	private Gtk.Label time_text;
+	private Box controlbox;
 
 	private uint timer;
 	private string movie;
@@ -41,6 +42,8 @@ public class VideoPlayer : Gtk.Window {
 	
 	private int64 length;
 	private int64 pos;
+	
+	private int timer_show;
 
 // switch audio
 
@@ -50,6 +53,16 @@ public class VideoPlayer : Gtk.Window {
 		this.io_write.write_chars((char[])"get_time_pos\n".data,out v);
 		this.io_write.write_chars((char[])"get_property pause\n".data,out v);
 		this.io_write.flush();
+		
+		if (this.timer_show!=0) {
+			this.timer_show--;
+			if (this.timer_show!=0) {
+				this.controlbox.show();
+			} else {
+				this.controlbox.hide();
+			}
+		}
+		
 		return(true);
 	}
 
@@ -60,7 +73,15 @@ public class VideoPlayer : Gtk.Window {
 		this.pos=0;
 		create_widgets ();
 		this.show_all();
+		timer_show=8;
 		this.timer=GLib.Timeout.add(500,this.timer_func);
+	}
+	
+	private bool on_click(Gdk.EventButton event) {
+
+		this.timer_show=8;
+		this.controlbox.show();
+		return true;
 	}
 
 	private void create_widgets () {
@@ -93,20 +114,14 @@ public class VideoPlayer : Gtk.Window {
 		bb.add (pause_button);
 		bb.add (stop_button);
 		bb.add (avanti);
-		bb.pack_end (audio,false,false,0);
-		var controlbox=new Box (Orientation.HORIZONTAL,0);
+		bb.add (audio);
+		this.controlbox=new Box (Orientation.HORIZONTAL,0);
 		playerbox.pack_start (controlbox, false, true, 0);
 		controlbox.pack_start (bb, true, true, 0);
 		this.time_text=new Label("");
 		this.time_text.set_justify(Gtk.Justification.CENTER);
 		controlbox.pack_start (this.time_text, false, true, 10);
 		this.add(playerbox);
-	}
-
-	private bool on_click(Gdk.EventButton event) {
-
-		GLib.stdout.printf("Click\n");
-		return true;
 	}
 
 	private bool gio_in(IOChannel gio, IOCondition condition) {
@@ -161,7 +176,9 @@ public class VideoPlayer : Gtk.Window {
 		argv+="-wid";
 		argv+="%u".printf((uint)this.xid);
 		argv+="%s".printf(this.movie);
-		GLib.Process.spawn_async_with_pipes(null,argv,null,GLib.SpawnFlags.SEARCH_PATH,null,out this.pid, out this.stdinput, out this.stdoutput, out this.stderror);
+		if (false==GLib.Process.spawn_async_with_pipes(null,argv,null,GLib.SpawnFlags.SEARCH_PATH,null,out this.pid, out this.stdinput, out this.stdoutput, out this.stderror)) {
+			Gtk.main_quit();
+		}
 		this.io_write = new IOChannel.unix_new(this.stdinput);
 		this.io_read = new IOChannel.unix_new(this.stdoutput);
 		if(!(io_read.add_watch(IOCondition.IN | IOCondition.HUP, gio_in) != 0)) {

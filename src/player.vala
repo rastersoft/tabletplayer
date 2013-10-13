@@ -44,9 +44,8 @@ public class VideoPlayer : Gtk.Window {
 	private int64 pos;
 	
 	private int timer_show;
-
-// switch audio
-
+	private int timer_basetime;
+	
 	public bool timer_func() {
 		size_t v;
 		this.io_write.write_chars((char[])"get_time_length\n".data,out v);

@@ -80,7 +80,6 @@ public class VideoPlayer : Gtk.Window {
 		this.is_initializated=false;
 		create_widgets ();
 		setup_gst_pipeline(video);
-		this.set_xv();
 		this.timer=GLib.Timeout.add(1000,this.timer_func);
 	}
 

@@ -73,15 +73,9 @@ public class VideoPlayer : Gtk.Window {
 		this.pos=0;
 		create_widgets ();
 		this.show_all();
-		timer_show=8;
+		this.timer_basetime=8;
+		this.timer_show=this.timer_basetime;
 		this.timer=GLib.Timeout.add(500,this.timer_func);
-	}
-	
-	private bool on_click(Gdk.EventButton event) {
-
-		this.timer_show=8;
-		this.controlbox.show();
-		return true;
 	}
 
 	private void create_widgets () {
@@ -193,6 +187,7 @@ public class VideoPlayer : Gtk.Window {
 		size_t v;
 		this.io_write.write_chars((char[])"pause\n".data,out v);
 		this.io_write.flush();
+		this.timer_show=this.timer_basetime;
 	}
 
 	public void on_stop () {
@@ -206,17 +201,27 @@ public class VideoPlayer : Gtk.Window {
 		size_t v;
 		this.io_write.write_chars((char[])"seek +15 0\n".data,out v);
 		this.io_write.flush();
+		this.timer_show=this.timer_basetime;
 	}
 
 	public void on_rewind() {
 		size_t v;
 		this.io_write.write_chars((char[])"seek -15 0\n".data,out v);
 		this.io_write.flush();
+		this.timer_show=this.timer_basetime;
 	}
 	public void on_audio() {
 		size_t v;
 		this.io_write.write_chars((char[])"switch_audio\n".data,out v);
 		this.io_write.flush();
+		this.timer_show=this.timer_basetime;
+	}
+	
+	private bool on_click(Gdk.EventButton event) {
+
+		this.timer_show=this.timer_basetime;
+		this.controlbox.show();
+		return true;
 	}
 }
 

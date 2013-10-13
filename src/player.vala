@@ -42,13 +42,18 @@ public class VideoPlayer : Gtk.Window {
 	private uint timer;
 	
 	private bool is_initializated;
+	private bool is_started;
 
 	public bool timer_func() {
 		if (this.set_xv()) {
 			return(true);
 		}
-		if (this.is_playing==false) {
+		if (this.is_started==false) {
 			this.on_play();
+			this.is_started=true;
+		}
+		if(this.is_playing==false) {
+			return true;
 		}
 		Gst.Format fmt = Gst.Format.TIME;
 		this.pipeline.query_duration(ref fmt,out this.duration);
@@ -81,11 +86,12 @@ public class VideoPlayer : Gtk.Window {
 	public VideoPlayer (string video) {
 		this.xid=0;
 		this.is_initializated=false;
+		this.is_started=false;
 		this.is_playing=false;
 		create_widgets ();
 		setup_gst_pipeline(video);
 		this.show_all();
-		this.timer=GLib.Timeout.add(500,this.timer_func);
+		this.timer=GLib.Timeout.add(1500,this.timer_func);
 	}
 
 	private void create_widgets () {
@@ -187,7 +193,7 @@ public class VideoPlayer : Gtk.Window {
 		this.filesrc.set("location",location);
 		this.decoder = ElementFactory.make("decodebin","decoder");
 		this.decoder.pad_added.connect(OnDynamicPad);
-		this.videosink = ElementFactory.make("ximagesink", "videosink");
+		this.videosink = ElementFactory.make("xvimagesink", "videosink");
 		this.videosink.set("force-aspect-ratio",true);
 		this.audiosink = ElementFactory.make("autoaudiosink","audiosink");
 		this.pipeline.add_many (this.filesrc, this.videosink,this.audiosink,this.decoder);

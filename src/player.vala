@@ -46,11 +46,12 @@ public class VideoPlayer : Gtk.Window {
 
 	public bool timer_func() {
 		if (this.set_xv()) {
-			return(true);
+			return true;
 		}
 		if (this.is_started==false) {
 			this.on_play();
 			this.is_started=true;
+			return true;
 		}
 		if(this.is_playing==false) {
 			return true;

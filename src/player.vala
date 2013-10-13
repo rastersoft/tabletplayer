@@ -42,6 +42,9 @@ public class VideoPlayer : Gtk.Window {
 	private uint timer;
 
 	public bool timer_func() {
+		if (this.set_xv()) {
+			return(true);
+		}
 		Gst.Format fmt = Gst.Format.TIME;
 		this.pipeline.query_duration(ref fmt,out this.duration);
 		this.pipeline.query_position(ref fmt,out this.position);
@@ -58,14 +61,22 @@ public class VideoPlayer : Gtk.Window {
 		return(true);
 	}
 
+	private bool set_xv() {
+		if (xid!=0) {
+			var xoverlay = this.videosink as Gst.XOverlay;
+			xoverlay.set_xwindow_id(this.xid);
+			this.is_playing=false;
+			this.on_play();
+			return true;
+		}
+		return false;
+	}
+
 	public VideoPlayer (string video) {
+		this.xid=0;
 		create_widgets ();
 		setup_gst_pipeline(video);
-		var xoverlay = this.videosink as Gst.XOverlay;
-		xoverlay.set_xwindow_id(this.xid);
-		this.is_playing=false;
-		this.on_play();
-
+		this.set_xv();
 		this.timer=GLib.Timeout.add(1000,this.timer_func);
 	}
 

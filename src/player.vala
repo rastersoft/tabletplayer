@@ -40,6 +40,8 @@ public class VideoPlayer : Gtk.Window {
 
 	private bool is_playing;
 	private uint timer;
+	
+	private bool is_initializated;
 
 	public bool timer_func() {
 		if (this.set_xv()) {
@@ -62,7 +64,8 @@ public class VideoPlayer : Gtk.Window {
 	}
 
 	private bool set_xv() {
-		if (xid!=0) {
+		if ((this.xid!=0)&&(this.is_initializated==false)) {
+			this.is_initializated=true;
 			var xoverlay = this.videosink as Gst.XOverlay;
 			xoverlay.set_xwindow_id(this.xid);
 			this.is_playing=false;
@@ -74,6 +77,7 @@ public class VideoPlayer : Gtk.Window {
 
 	public VideoPlayer (string video) {
 		this.xid=0;
+		this.is_initializated=false;
 		create_widgets ();
 		setup_gst_pipeline(video);
 		this.set_xv();

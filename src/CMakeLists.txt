@@ -38,31 +38,23 @@ link_libraries( ${DEPS_LIBRARIES} )
 link_directories( ${DEPS_LIBRARY_DIRS} )
 find_package(Vala REQUIRED)
 include(ValaVersion)
-ensure_vala_version("0.20" MINIMUM)
+ensure_vala_version("0.18" MINIMUM)
 include(ValaPrecompile)
 
-set(VALA_PACKAGES
-	gdk-x11-3.0
-	gstreamer-0.10
-	gstreamer-interfaces-0.10
-	posix
-	glib-2.0
-	gtk+-3.0
-)
+set (VALA_PACKAGES ${VALA_PACKAGES} gdk-x11-3.0)
+set (VALA_PACKAGES ${VALA_PACKAGES} posix)
+set (VALA_PACKAGES ${VALA_PACKAGES} glib-2.0)
+set (VALA_PACKAGES ${VALA_PACKAGES} gtk+-3.0)
 
-set(APP_SOURCES
-	${CMAKE_CURRENT_BINARY_DIR}/Config.vala
-	interface.vala
-	player.vala
-	tabletplayer.vala
-)
+set (APP_SOURCES ${APP_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/Config.vala)
+set (APP_SOURCES ${APP_SOURCES} interface.vala)
+set (APP_SOURCES ${APP_SOURCES} player.vala)
+set (APP_SOURCES ${APP_SOURCES} tabletplayer.vala)
 
 vala_precompile(VALA_C tabletplayer
 	${APP_SOURCES}
 PACKAGES
 	${VALA_PACKAGES}
-CUSTOM_VAPIS
-	${CUSTOM_VAPIS_LIST}
 )
 
 add_executable(tabletplayer ${VALA_C})

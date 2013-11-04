@@ -7,6 +7,7 @@ cmake_policy (VERSION 2.8)
 list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 enable_testing ()
 
+option(ICON_UPDATE "Update the icon cache after installing" ON)
 option(BUILD_VALADOC "Build API documentation if Valadoc is available" OFF)
 
 set(HAVE_VALADOC OFF)
@@ -22,13 +23,12 @@ endif()
 
 find_package(PkgConfig)
 
-pkg_check_modules(DEPS REQUIRED
-	gdk-x11-3.0
-	gstreamer-0.10
-	gstreamer-interfaces-0.10
-	glib-2.0
-	gtk+-3.0
-)
+set(MODULES_TO_CHECK ${MODULES_TO_CHECK} gdk-x11-3.0)
+set(MODULES_TO_CHECK ${MODULES_TO_CHECK} glib-2.0)
+set(MODULES_TO_CHECK ${MODULES_TO_CHECK} gtk+-3.0)
+
+pkg_check_modules(DEPS REQUIRED ${MODULES_TO_CHECK})
 
 add_subdirectory(src)
 add_subdirectory(po)
+add_subdirectory(data/interface)

@@ -23,12 +23,12 @@ using Posix;
 
 public class VideoPlayer : Gtk.Window {
 
-	private DrawingArea drawing_area;
+	private Gtk.DrawingArea drawing_area;
 	private ulong xid;
-	private Button play_button;
-	private Button pause_button;
+	private Gtk.Button play_button;
+	private Gtk.Button pause_button;
 	private Gtk.Label time_text;
-	private Box controlbox;
+	private Gtk.Box controlbox;
 
 	private uint timer;
 	private string movie;
@@ -45,6 +45,7 @@ public class VideoPlayer : Gtk.Window {
 	
 	private int timer_show;
 	private int timer_basetime;
+	private Gtk.Builder builder;
 	
 	public bool timer_func() {
 		size_t v;
@@ -81,40 +82,32 @@ public class VideoPlayer : Gtk.Window {
 	private void create_widgets () {
 
 		// Player section
-		var playerbox = new Box (Orientation.VERTICAL, 0);
-		this.drawing_area = new DrawingArea ();
+		
+		string[] obj={};
+		
+		obj+="container";
+		this.builder = new Builder();
+		this.builder.add_objects_from_file(Path.build_filename(Constants.PKGDATADIR,"interface.ui"),obj);
+		
+		var playerbox = (Gtk.Box) this.builder.get_object("container");
+		this.controlbox = (Gtk.Box) this.builder.get_object("box1");
+		this.drawing_area = (Gtk.DrawingArea) this.builder.get_object("video_area");
 		this.drawing_area.realize.connect(on_realize);
 		this.drawing_area.add_events (Gdk.EventMask.BUTTON_PRESS_MASK);
 		this.drawing_area.button_press_event.connect(this.on_click);
-		playerbox.pack_start (this.drawing_area, true, true, 0);
-
-		play_button = new Button.from_stock(Stock.MEDIA_PLAY);
+		this.time_text=(Gtk.Label) this.builder.get_object("timer");
+		this.play_button=(Gtk.Button) this.builder.get_object("play");
 		play_button.clicked.connect (on_play);
-		pause_button = new Button.from_stock(Stock.MEDIA_PAUSE);
+		this.pause_button=(Gtk.Button) this.builder.get_object("pause");
 		pause_button.clicked.connect (on_play);
-		var stop_button = new Button.from_stock(Stock.MEDIA_STOP);
+		var stop_button = (Gtk.Button) this.builder.get_object("stop");
 		stop_button.clicked.connect (on_stop);
-		var avanti = new Button.from_stock(Stock.MEDIA_FORWARD);
+		var avanti =  (Gtk.Button) this.builder.get_object("fast");
 		avanti.clicked.connect (on_forward);
-		var rewind = new Button.from_stock(Stock.MEDIA_REWIND);
+		var rewind =  (Gtk.Button) this.builder.get_object("rewind");
 		rewind.clicked.connect (on_rewind);
-		var audio = new Button.with_label(_("Audio"));
+		var audio =  (Gtk.Button) this.builder.get_object("lang");
 		audio.clicked.connect (on_audio);
-
-		var bb = new ButtonBox (Orientation.HORIZONTAL);
-		bb.set_layout(Gtk.ButtonBoxStyle.START);
-		bb.add (rewind);
-		bb.add (play_button);
-		bb.add (pause_button);
-		bb.add (stop_button);
-		bb.add (avanti);
-		bb.add (audio);
-		this.controlbox=new Box (Orientation.HORIZONTAL,0);
-		playerbox.pack_start (controlbox, false, true, 0);
-		controlbox.pack_start (bb, true, true, 0);
-		this.time_text=new Label("");
-		this.time_text.set_justify(Gtk.Justification.CENTER);
-		controlbox.pack_start (this.time_text, false, true, 10);
 		this.add(playerbox);
 	}
 
@@ -185,6 +178,7 @@ public class VideoPlayer : Gtk.Window {
 
 	public void on_play () {
 		size_t v;
+		GLib.stdout.printf("Pausa\n");
 		this.io_write.write_chars((char[])"pause\n".data,out v);
 		this.io_write.flush();
 		this.timer_show=this.timer_basetime;

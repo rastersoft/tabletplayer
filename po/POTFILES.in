@@ -1,3 +1,4 @@
-src/player.vala
 src/tabletplayer.vala
+src/player.vala
 src/interface.vala
+[type: gettext/glade]data/interface/interface.ui

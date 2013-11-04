@@ -21,6 +21,4 @@ FOREACH(element ${AUTOVALA_PATH_LIST})
 	ENDIF()
 ENDFOREACH()
 
-include (Translations)
-add_translations_directory("tabletplayer")
-add_translations_catalog("tabletplayer" ../src ../data/interface )
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/interface.ui DESTINATION share/tabletplayer/ )

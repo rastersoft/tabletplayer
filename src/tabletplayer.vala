@@ -21,7 +21,6 @@ using Gtk;
 
 int main(string[] args) {
 
-	Gst.init (ref args);
 	Gtk.init (ref args);
 
 	VideoPlayer player;

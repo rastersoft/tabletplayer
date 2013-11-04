@@ -108,6 +108,10 @@ public class VideoPlayer : Gtk.Window {
 		rewind.clicked.connect (on_rewind);
 		var audio =  (Gtk.Button) this.builder.get_object("lang");
 		audio.clicked.connect (on_audio);
+		var audio_p =  (Gtk.Button) this.builder.get_object("volume_up");
+		audio_p.clicked.connect (on_audio_plus);
+		var audio_m =  (Gtk.Button) this.builder.get_object("volume_down");
+		audio_m.clicked.connect (on_audio_minus);
 		this.add(playerbox);
 	}
 
@@ -207,6 +211,20 @@ public class VideoPlayer : Gtk.Window {
 	public void on_audio() {
 		size_t v;
 		this.io_write.write_chars((char[])"switch_audio\n".data,out v);
+		this.io_write.flush();
+		this.timer_show=this.timer_basetime;
+	}
+	
+	public void on_audio_plus() {
+		size_t v;
+		this.io_write.write_chars((char[])"volume 47\n".data,out v);
+		this.io_write.flush();
+		this.timer_show=this.timer_basetime;
+	}
+	
+	public void on_audio_minus() {
+		size_t v;
+		this.io_write.write_chars((char[])"volume -47\n".data,out v);
 		this.io_write.flush();
 		this.timer_show=this.timer_basetime;
 	}

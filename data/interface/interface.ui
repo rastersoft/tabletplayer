@@ -3,6 +3,7 @@
   <!-- interface-requires gtk+ 3.0 -->
   <object class="GtkWindow" id="window1">
     <property name="can_focus">False</property>
+    <property name="has_resize_grip">False</property>
     <child>
       <object class="GtkBox" id="container">
         <property name="visible">True</property>
@@ -27,6 +28,7 @@
               <object class="GtkButtonBox" id="buttonbox2">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="homogeneous">True</property>
                 <property name="layout_style">start</property>
                 <child>
                   <object class="GtkButton" id="rewind">
@@ -146,6 +148,7 @@
               <object class="GtkButtonBox" id="buttonbox3">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="homogeneous">True</property>
                 <property name="layout_style">start</property>
                 <child>
                   <object class="GtkButton" id="lang">
@@ -208,6 +211,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
+                <property name="pack_type">end</property>
                 <property name="position">2</property>
               </packing>
             </child>

@@ -31,6 +31,7 @@ pkg_check_modules(DEPS REQUIRED ${MODULES_TO_CHECK})
 
 add_subdirectory(src)
 add_subdirectory(po)
+add_subdirectory(data/pixmaps)
 add_subdirectory(data)
 add_subdirectory(data/icons)
 add_subdirectory(data/interface)

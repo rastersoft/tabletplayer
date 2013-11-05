@@ -24,3 +24,7 @@ vala_check_package: gdk-x11-3.0
 
 *icon: apps data/icons/tabletplayer.svg
 
+*pixmap: data/pixmaps/audiolang.svg
+*pixmap: data/pixmaps/volume_plus.svg
+*pixmap: data/pixmaps/volume_minus.svg
+

@@ -16,3 +16,4 @@ raster@rastersoft.com
 http://www.rastersoft.com
 
 GIT: git://github.com/rastersoft/tabletplayer.git
+

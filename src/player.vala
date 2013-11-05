@@ -243,8 +243,10 @@ public class VideoPlayer : Gtk.Window {
 			this.timer_show=this.timer_basetime;
 			this.controlbox.show();
 		} else {
-			this.timer_show=0;
-			this.controlbox.hide();
+			if (this.paused==false) {
+				this.timer_show=0;
+				this.controlbox.hide();
+			}
 		}
 		return true;
 	}

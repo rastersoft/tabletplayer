@@ -239,8 +239,13 @@ public class VideoPlayer : Gtk.Window {
 	
 	private bool on_click(Gdk.EventButton event) {
 
-		this.timer_show=this.timer_basetime;
-		this.controlbox.show();
+		if (this.timer_show==0) {
+			this.timer_show=this.timer_basetime;
+			this.controlbox.show();
+		} else {
+			this.timer_show=0;
+			this.controlbox.hide();
+		}
 		return true;
 	}
 }

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Exec=tabletplayer
+Hidden=false
+NoDisplay=false
+Name=Movie player
+Icon=tabletplayer.svg
+Categories=AudioVideo;

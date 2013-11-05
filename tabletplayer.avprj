@@ -18,5 +18,9 @@ vala_check_package: gdk-x11-3.0
 *vala_source: player.vala
 *vala_source: tabletplayer.vala
 
+*desktop: data/tabletplayer.desktop
+
 *glade: data/interface/interface.ui
+
+*icon: apps data/icons/tabletplayer.svg
 

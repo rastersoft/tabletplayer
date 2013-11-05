@@ -42,6 +42,7 @@ public class VideoPlayer : Gtk.Window {
 	
 	private int64 length;
 	private int64 pos;
+	private bool paused;
 	
 	private int timer_show;
 	private int timer_basetime;
@@ -54,6 +55,10 @@ public class VideoPlayer : Gtk.Window {
 		this.io_write.write_chars((char[])"get_property pause\n".data,out v);
 		this.io_write.flush();
 		
+		if (this.paused) {
+			this.timer_show=timer_basetime;
+		}
+
 		if (this.timer_show!=0) {
 			this.timer_show--;
 			if (this.timer_show!=0) {
@@ -74,8 +79,9 @@ public class VideoPlayer : Gtk.Window {
 		create_widgets ();
 		this.has_resize_grip=false;
 		this.show_all();
-		this.timer_basetime=8;
+		this.timer_basetime=10;
 		this.timer_show=this.timer_basetime;
+		this.paused=false;
 		this.timer=GLib.Timeout.add(500,this.timer_func);
 	}
 
@@ -141,9 +147,11 @@ public class VideoPlayer : Gtk.Window {
 			if(msg.substring(10)=="no") {
 				this.pause_button.show();
 				this.play_button.hide();
+				this.paused=false;
 			} else {
 				this.pause_button.hide();
 				this.play_button.show();
+				this.paused=true;
 			}
 			int dsec=(int)(this.length%60);
 			int dmin=(int)((this.length/60)%60);

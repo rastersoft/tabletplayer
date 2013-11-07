@@ -21,20 +21,31 @@ using GLib;
 
 public class UserInterface : Gtk.Window {
  
-	private Gtk.FileChooserDialog filer;
+	private Gtk.Builder builder;
+	private Gtk.Dialog filer;
+	private Gtk.ListStore path_model;
+	private Gtk.IconView icon_view;
+	
+	private string? file_selected;
  
  	public UserInterface() {
- 		this.filer=new Gtk.FileChooserDialog(_("Select movie"),null, Gtk.FileChooserAction.OPEN,_("_Cancel"),Gtk.ResponseType.CANCEL,_("_Open"),Gtk.ResponseType.ACCEPT);
+ 	
+ 		this.builder = new Builder();
+		this.builder.add_from_file(Path.build_filename(Constants.PKGDATADIR,"filechooser.ui"));
+		this.filer=(Gtk.Dialog)this.builder.get_object("filer_dialog");
+		this.icon_view=(Gtk.IconView)this.builder.get_object("iconview1");
+		this.icon_view.add_events (Gdk.EventMask.BUTTON_PRESS_MASK);
+		this.file_selected=null;
  	}
  
 	public string ?run() {
 		this.filer.show_all();
 		var retval=this.filer.run();
 		this.filer.hide();
-		if (retval==Gtk.ResponseType.CANCEL) {
+		if (retval!=2) {
 			return null;
 		}
-		
+
 		string path;
 		if(this.filer.get_current_folder()!=null) {
 			path=GLib.Path.build_path(this.filer.get_current_folder(),this.filer.get_filename());

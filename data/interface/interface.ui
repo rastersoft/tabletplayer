@@ -26,8 +26,8 @@
             <property name="can_focus">False</property>
             <child>
               <object class="GtkButton" id="rewind">
-                <property name="width_request">48</property>
-                <property name="height_request">48</property>
+                <property name="width_request">64</property>
+                <property name="height_request">64</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="receives_default">True</property>
@@ -47,7 +47,8 @@
             </child>
             <child>
               <object class="GtkButton" id="play">
-                <property name="width_request">48</property>
+                <property name="width_request">64</property>
+                <property name="height_request">64</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="receives_default">True</property>
@@ -67,8 +68,8 @@
             </child>
             <child>
               <object class="GtkButton" id="pause">
-                <property name="width_request">48</property>
-                <property name="height_request">48</property>
+                <property name="width_request">64</property>
+                <property name="height_request">64</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="receives_default">True</property>
@@ -88,8 +89,8 @@
             </child>
             <child>
               <object class="GtkButton" id="stop">
-                <property name="width_request">48</property>
-                <property name="height_request">48</property>
+                <property name="width_request">64</property>
+                <property name="height_request">64</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="receives_default">True</property>
@@ -109,7 +110,8 @@
             </child>
             <child>
               <object class="GtkButton" id="fast">
-                <property name="width_request">48</property>
+                <property name="width_request">64</property>
+                <property name="height_request">64</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="receives_default">True</property>
@@ -141,7 +143,8 @@
             </child>
             <child>
               <object class="GtkButton" id="lang">
-                <property name="width_request">48</property>
+                <property name="width_request">64</property>
+                <property name="height_request">64</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="receives_default">True</property>
@@ -161,8 +164,8 @@
             </child>
             <child>
               <object class="GtkButton" id="volume_down">
-                <property name="width_request">48</property>
-                <property name="height_request">48</property>
+                <property name="width_request">64</property>
+                <property name="height_request">64</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="receives_default">True</property>
@@ -182,8 +185,8 @@
             </child>
             <child>
               <object class="GtkButton" id="volume_up">
-                <property name="width_request">48</property>
-                <property name="height_request">48</property>
+                <property name="width_request">64</property>
+                <property name="height_request">64</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="receives_default">True</property>

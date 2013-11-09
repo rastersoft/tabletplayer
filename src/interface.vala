@@ -58,6 +58,21 @@ public class UserInterface : GLib.Object {
 		this.icon_view.set_text_column(1);
 		this.file_selected = null;
 		this.current_path=Environment.get_home_dir();
+		var button_up = (Gtk.Button) this.builder.get_object("goup");
+		button_up.clicked.connect(this.go_up);
+	}
+
+	private void go_up() {
+		var list_folders = this.current_path.split("/");
+		var len = list_folders.length;
+		this.current_path="/";
+		len--;
+		if (len>0) {
+			for(var i=0;i<len;i++) {
+				this.current_path=Path.build_filename(this.current_path,list_folders[i]);
+			}
+		}
+		this.refresh_files();
 	}
 
 	private void set_scroll_top() {
@@ -132,17 +147,12 @@ public class UserInterface : GLib.Object {
 
 		this.path_model.clear();
 		this.filelist = new Gee.ArrayList<file_info ?>();
-		var element = new file_info();
-		element.name = "..";
-		element.icon = null;
-		element.isdir = true;
-		this.filelist.add(element);
 		while ((info_file = listfile.next_file(null)) != null) {
 			var name = info_file.get_name().dup();
 			if (name[0]=='.') {
 				continue;
 			}
-			element = new file_info();
+			var element = file_info();
 			element.name = name;
 			element.icon = (GLib.ThemedIcon)info_file.get_icon();
 			if (info_file.get_file_type()==FileType.DIRECTORY) {
@@ -189,7 +199,10 @@ public class UserInterface : GLib.Object {
 
 		this.file_selected=null;
 		this.refresh_files();
-		var retval=this.filer.run();
+		int retval=10;
+		do {
+			retval=this.filer.run();
+		} while (retval==10);
 		this.filer.hide();
 		return (file_selected);
 	}

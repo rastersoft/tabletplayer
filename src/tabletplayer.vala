@@ -19,6 +19,8 @@
 using GLib;
 using Gtk;
 
+// project version=0.2
+
 int main(string[] args) {
 
 	Gtk.init (ref args);

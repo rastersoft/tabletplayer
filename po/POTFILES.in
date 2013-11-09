@@ -1,5 +1,5 @@
-src/interface.vala
 src/tabletplayer.vala
+src/interface.vala
 src/player.vala
 [type: gettext/glade]data/interface/filechooser.ui
 [type: gettext/glade]data/interface/interface.ui

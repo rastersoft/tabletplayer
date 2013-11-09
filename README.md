@@ -6,6 +6,17 @@ WHAT IS?
 
 TabletPlayer is a very simple and lightweight front-end for MPlayer. It just allows to choose a media file and play it. It also allows to rewind, fast-forward and pause, and shows the current time position and the full length of the media. Finally, it also allows to set the volume and the language audio track.
 
+## VERSIONS
+
+Version 0.1
+
+ * First public version
+
+Version 0.2
+
+ * New interface with bigger buttons, easier to use from a touch screen
+
+
 ## CONTACTING THE AUTHOR ##
 
 Sergio Costas Rodriguez

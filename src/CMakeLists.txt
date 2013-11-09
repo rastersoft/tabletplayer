@@ -43,6 +43,7 @@ include(ValaPrecompile)
 
 set (VALA_PACKAGES ${VALA_PACKAGES} gdk-x11-3.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} posix)
+set (VALA_PACKAGES ${VALA_PACKAGES} gee-1.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} glib-2.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} gtk+-3.0)
 

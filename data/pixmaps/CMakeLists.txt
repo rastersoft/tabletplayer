@@ -22,5 +22,5 @@ FOREACH(element ${AUTOVALA_PATH_LIST})
 ENDFOREACH()
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/audiolang.svg DESTINATION share/tabletplayer/ )
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/volume_plus.svg DESTINATION share/tabletplayer/ )
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/volume_minus.svg DESTINATION share/tabletplayer/ )
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/volume_plus.svg DESTINATION share/tabletplayer/ )

@@ -1,24 +1,24 @@
 ### AutoVala Project ###
-autovala_version: 6
+autovala_version: 7
 project_name: tabletplayer
-vala_version: 0.18
-
-*po: po
-
-*data: data/local
-
-*doc: doc
+vala_version: 0.20
 
 vala_binary: src/tabletplayer
 *version: 0.2
-vala_check_package: gdk-x11-3.0
 *vala_package: posix
+vala_check_package: gdk-x11-3.0
 *vala_check_package: gee-1.0
 *vala_check_package: glib-2.0
 *vala_check_package: gtk+-3.0
 *vala_source: interface.vala
 *vala_source: player.vala
 *vala_source: tabletplayer.vala
+
+*po: po
+
+*data: data/local
+
+*doc: doc
 
 *desktop: data/tabletplayer.desktop
 
@@ -28,6 +28,6 @@ vala_check_package: gdk-x11-3.0
 *icon: apps data/icons/tabletplayer.svg
 
 *pixmap: data/pixmaps/audiolang.svg
-*pixmap: data/pixmaps/volume_plus.svg
 *pixmap: data/pixmaps/volume_minus.svg
+*pixmap: data/pixmaps/volume_plus.svg
 

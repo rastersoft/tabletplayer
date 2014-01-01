@@ -1,7 +1,7 @@
 ### AutoVala Project ###
 autovala_version: 8
 project_name: tabletplayer
-vala_version: 0.22
+vala_version: 0.20
 
 vala_binary: src/tabletplayer
 *version: 0.3

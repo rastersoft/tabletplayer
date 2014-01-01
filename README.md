@@ -16,6 +16,10 @@ Version 0.2
 
  * New interface with bigger buttons, easier to use from a touch screen
 
+Version 0.3
+
+ * Now remembers which videos has been seen and marks them with a bar in its icon, specifying the percentage whatched.
+
 
 ## CONTACTING THE AUTHOR ##
 
@@ -27,4 +31,3 @@ raster@rastersoft.com
 http://www.rastersoft.com
 
 GIT: git://github.com/rastersoft/tabletplayer.git
-

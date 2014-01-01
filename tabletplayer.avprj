@@ -4,7 +4,7 @@ project_name: tabletplayer
 vala_version: 0.22
 
 vala_binary: src/tabletplayer
-*version: 0.2
+*version: 0.3
 *vala_package: posix
 vala_check_package: gdk-x11-3.0
 *vala_check_package: gee-0.8

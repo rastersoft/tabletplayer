@@ -19,7 +19,7 @@
 using GLib;
 using Gtk;
 
-// project version=0.2
+// project version=0.3
 
 int main(string[] args) {
 

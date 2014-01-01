@@ -1,4 +1,5 @@
 src/interface.vala
+src/movieinfo.vala
 src/player.vala
 src/tabletplayer.vala
 [type: gettext/glade]data/interface/filechooser.ui

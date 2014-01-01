@@ -47,6 +47,7 @@ public class VideoPlayer : Gtk.Window {
 	private int timer_show;
 	private int timer_basetime;
 	private Gtk.Builder builder;
+	private MovieInfo movie_info;
 	
 	public bool timer_func() {
 		size_t v;
@@ -73,6 +74,7 @@ public class VideoPlayer : Gtk.Window {
 
 	public VideoPlayer (string video) {
 		this.movie=video;
+		this.movie_info = new MovieInfo(Path.get_dirname(video));
 		this.xid=0;
 		this.length=0;
 		this.pos=0;
@@ -200,6 +202,7 @@ public class VideoPlayer : Gtk.Window {
 		GLib.Source.remove(this.timer);
 		size_t v;
 		this.io_write.write_chars((char[])"quit 0\n".data,out v);
+		this.movie_info.set_data(this.movie,this.length,this.pos);
 		Gtk.main_quit();
 	}
 

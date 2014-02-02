@@ -48,6 +48,7 @@ public class VideoPlayer : Gtk.Window {
 	private int timer_basetime;
 	private Gtk.Builder builder;
 	private MovieInfo movie_info;
+	private preferences prefs;
 	
 	public bool timer_func() {
 		size_t v;
@@ -72,7 +73,8 @@ public class VideoPlayer : Gtk.Window {
 		return(true);
 	}
 
-	public VideoPlayer (string video) {
+	public VideoPlayer (string video,preferences prefs) {
+		this.prefs=prefs;
 		this.movie=video;
 		this.movie_info = new MovieInfo(Path.get_dirname(video));
 		this.xid=0;
@@ -176,6 +178,16 @@ public class VideoPlayer : Gtk.Window {
 		argv+="-fs";
 		argv+="-quiet";
 		argv+="-slave";
+		if (this.prefs.force_ffmpeg) {
+			argv+="-afm";
+			argv+="ffmpeg";
+		}
+		if (this.prefs.use_vdpau) {
+			argv+="-vo";
+			argv+="vdpau";
+			argv+="-vc";
+			argv+="ffmpeg12vdpau,ffh264vdpau";
+		}
 		argv+="-wid";
 		argv+="%u".printf((uint)this.xid);
 		argv+="%s".printf(this.movie);

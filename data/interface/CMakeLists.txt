@@ -3,3 +3,4 @@
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/filechooser.ui DESTINATION share/tabletplayer/ )
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/interface.ui DESTINATION share/tabletplayer/ )
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/settings.ui DESTINATION share/tabletplayer/ )

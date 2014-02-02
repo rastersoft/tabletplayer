@@ -19,21 +19,22 @@
 using GLib;
 using Gtk;
 
-// project version=0.3
+// project version=0.4
 
 int main(string[] args) {
 
 	Gtk.init (ref args);
 
 	VideoPlayer player;
-	UserInterface iface=new UserInterface();
+	var prefs = new preferences();
+	UserInterface iface=new UserInterface(prefs);
 
 	do {
 		var retval=iface.run();
 		if (retval==null) {
 			break;
 		} else {
-			player = new VideoPlayer (retval);
+			player = new VideoPlayer (retval,prefs);
 			player.destroy.connect( (widget)=> {
 				player.on_stop();
 			});

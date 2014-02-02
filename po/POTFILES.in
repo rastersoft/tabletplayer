@@ -1,6 +1,8 @@
 src/interface.vala
 src/movieinfo.vala
 src/player.vala
+src/preferences.vala
 src/tabletplayer.vala
 [type: gettext/glade]data/interface/filechooser.ui
 [type: gettext/glade]data/interface/interface.ui
+[type: gettext/glade]data/interface/settings.ui

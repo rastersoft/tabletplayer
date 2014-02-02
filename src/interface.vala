@@ -41,9 +41,12 @@ public class UserInterface : GLib.Object {
  
 	private Gee.Map<uint, Gdk.Pixbuf ?>icon_cache;
 	private Gee.List<file_info ?> filelist;
+	
+	private preferences prefs;
  
- 	public UserInterface() {
+ 	public UserInterface(preferences prefs) {
  	
+ 		this.prefs=prefs;
  		this.icon_cache = new Gee.HashMap<uint, Gdk.Pixbuf?>();
  		this.builder = new Builder();
 		this.builder.add_from_file(Path.build_filename(Constants.PKGDATADIR,"filechooser.ui"));
@@ -231,6 +234,12 @@ public class UserInterface : GLib.Object {
 		int retval=10;
 		do {
 			retval=this.filer.run();
+			if (retval==11) { // preferences
+				this.filer.hide();
+				this.prefs.configure();
+				retval=10;
+				this.filer.show();
+			}
 		} while (retval==10);
 		this.filer.hide();
 		return (file_selected);

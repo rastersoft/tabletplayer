@@ -106,7 +106,6 @@ public class MovieInfo : Object {
 	}
 
 	public bool get_movie_data(string path, out int64 duration, out int64 last_position) {
-		GLib.stdout.printf("pido nombre %s\n",path);
 		duration = -1;
 		last_position = -1;
 		if (this.durations.has_key(path)==false) {

@@ -30,6 +30,7 @@ public class preferences:Object {
 	private Gtk.ToggleButton force_ffmpeg_b;
 	
 	public preferences() {
+		this.read_config();
 		this.builder = new Builder();
 		this.builder.add_from_file(Path.build_filename(Constants.PKGDATADIR,"settings.ui"));
 		this.mainw=(Gtk.Dialog)this.builder.get_object("settings");
@@ -42,7 +43,43 @@ public class preferences:Object {
 		var retval=this.mainw.run();
 		if (retval==2) {
 			this.force_ffmpeg=this.force_ffmpeg_b.get_active();
+			this.write_config();
 		}
 		this.mainw.hide();
+	}
+	
+	private void read_config() {
+		var data_file = File.new_for_path(Path.build_filename(GLib.Environment.get_variable("HOME"),".tabletplayer.cfg"));
+		if (data_file.query_exists()) {
+			try {
+				var dis = new DataInputStream (data_file.read ());
+				string line;
+				while ((line = dis.read_line (null)) != null) {
+					line = line.strip();
+					if (line=="") {
+						continue;
+					}
+					var data = line.split(" ");
+					if(data[0]=="force_ffmpeg") {
+						if(data[1]=="1") {
+							this.force_ffmpeg=true;
+						} else {
+							this.force_ffmpeg=false;
+						}
+					}
+				}
+			} catch (Error e) {
+			}
+		}
+	}
+	
+	private void write_config() {
+		var data_file = File.new_for_path(Path.build_filename(GLib.Environment.get_variable("HOME"),".tabletplayer.cfg"));
+		if (data_file.query_exists()) {
+			data_file.delete();
+		}
+		var dos = new DataOutputStream (data_file.create (FileCreateFlags.REPLACE_DESTINATION));
+		var data = "force_ffmpeg %s\n".printf(this.force_ffmpeg ? "1" : "0");
+		dos.put_string(data);
 	}
 }

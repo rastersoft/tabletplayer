@@ -39,7 +39,6 @@ public class MovieInfo : Object {
 	public MovieInfo(string path) {
 
 		FileInfo info_file;
-		FileType typeinfo;
 
 		this.current_path = path;
 
@@ -96,9 +95,9 @@ public class MovieInfo : Object {
 		}
 	}
 
-	public void set_data(string path, int64 duration, int64 last_position) {
+	public void set_movie_data(string path, int64 duration, int64 last_position) {
 		if (this.durations.has_key(path)) {
-			this.durations.remove(path,null);
+			this.durations.unset(path,null);
 		}
 		var path2 = path;
 		var element = new MovieInfoData(path2,duration,last_position);
@@ -106,7 +105,7 @@ public class MovieInfo : Object {
 		this.store_movie_info();
 	}
 
-	public bool get_data(string path, out int64 duration, out int64 last_position) {
+	public bool get_movie_data(string path, out int64 duration, out int64 last_position) {
 		GLib.stdout.printf("pido nombre %s\n",path);
 		duration = -1;
 		last_position = -1;

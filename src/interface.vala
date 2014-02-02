@@ -137,13 +137,9 @@ public class UserInterface : GLib.Object {
  	private void refresh_files() {
  
 		TreeIter iter;
-		Gdk.Pixbuf pbuf_file=this.icon_view.render_icon(Stock.FILE,IconSize.DIALOG,"");
-		Gdk.Pixbuf pbuf_folder=this.icon_view.render_icon(Stock.DIRECTORY,IconSize.DIALOG,"");
 		Gdk.Pixbuf pbuf=null;
 		Gdk.Pixbuf pbuf2=null;
 		FileInfo info_file;
-		FileType typeinfo;
-		bool isdir;
 		var movie_info = new MovieInfo(current_path);
 
 		this.labelpath.set_text(current_path);
@@ -198,7 +194,7 @@ public class UserInterface : GLib.Object {
 
 			int64 duration;
 			int64 last_position;
-			if (movie_info.get_data(Path.build_filename(this.current_path,file.name), out duration, out last_position)) {
+			if (movie_info.get_movie_data(Path.build_filename(this.current_path,file.name), out duration, out last_position)) {
 				var surface = new Cairo.ImageSurface(Cairo.Format.ARGB32, pbuf.width, pbuf.height);
 				var cairo_ctx = new Cairo.Context(surface); 
 				Gdk.cairo_set_source_pixbuf(cairo_ctx,pbuf,0,0);

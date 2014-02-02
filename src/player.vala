@@ -182,12 +182,6 @@ public class VideoPlayer : Gtk.Window {
 			argv+="-afm";
 			argv+="ffmpeg";
 		}
-		if (this.prefs.use_vdpau) {
-			argv+="-vo";
-			argv+="vdpau";
-			argv+="-vc";
-			argv+="ffmpeg12vdpau,ffh264vdpau";
-		}
 		argv+="-wid";
 		argv+="%u".printf((uint)this.xid);
 		argv+="%s".printf(this.movie);
@@ -214,7 +208,7 @@ public class VideoPlayer : Gtk.Window {
 		GLib.Source.remove(this.timer);
 		size_t v;
 		this.io_write.write_chars((char[])"quit 0\n".data,out v);
-		this.movie_info.set_data(this.movie,this.length,this.pos);
+		this.movie_info.set_movie_data(this.movie,this.length,this.pos);
 		Gtk.main_quit();
 	}
 

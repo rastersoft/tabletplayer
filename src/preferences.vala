@@ -23,29 +23,24 @@ using Gee;
 
 public class preferences:Object {
 	
-	public bool use_vdpau=false;
 	public bool force_ffmpeg=false;
 	
 	private Gtk.Builder builder;
 	private Gtk.Dialog mainw;
-	private Gtk.ToggleButton use_vdpau_b;
 	private Gtk.ToggleButton force_ffmpeg_b;
 	
 	public preferences() {
 		this.builder = new Builder();
 		this.builder.add_from_file(Path.build_filename(Constants.PKGDATADIR,"settings.ui"));
 		this.mainw=(Gtk.Dialog)this.builder.get_object("settings");
-		this.use_vdpau_b=(Gtk.ToggleButton)this.builder.get_object("use_vdpau");
 		this.force_ffmpeg_b=(Gtk.ToggleButton)this.builder.get_object("force_ffmpeg");
 	}
 	
 	public void configure() {
-		this.use_vdpau_b.set_active(this.use_vdpau);
 		this.force_ffmpeg_b.set_active(this.force_ffmpeg);
 		this.mainw.show();
 		var retval=this.mainw.run();
 		if (retval==2) {
-			this.use_vdpau=this.use_vdpau_b.get_active();
 			this.force_ffmpeg=this.force_ffmpeg_b.get_active();
 		}
 		this.mainw.hide();

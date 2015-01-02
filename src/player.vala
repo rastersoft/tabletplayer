@@ -86,7 +86,6 @@ public class VideoPlayer : Gtk.Window {
 		this.timer_basetime=10;
 		this.timer_show=this.timer_basetime;
 		this.paused=false;
-		this.timer=GLib.Timeout.add(500,this.timer_func);
 	}
 
 	private void create_widgets () {
@@ -190,10 +189,12 @@ public class VideoPlayer : Gtk.Window {
 		}
 		this.io_write = new IOChannel.unix_new(this.stdinput);
 		this.io_read = new IOChannel.unix_new(this.stdoutput);
+		this.io_read.set_encoding(null);
 		if(!(io_read.add_watch(IOCondition.IN | IOCondition.HUP, gio_in) != 0)) {
 			print("Cannot add watch on IOChannel!\n");
 			return;
 		}
+		this.timer=GLib.Timeout.add(500,this.timer_func);
 	}
 
 	public void on_play () {

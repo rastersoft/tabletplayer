@@ -215,14 +215,14 @@ public class VideoPlayer : Gtk.Window {
 
 	public void on_forward() {
 		size_t v;
-		this.io_write.write_chars((char[])"seek +15 0\n".data,out v);
+		this.io_write.write_chars((char[])"seek +%d 0\n".printf(this.prefs.jump_time).data,out v);
 		this.io_write.flush();
 		this.timer_show=this.timer_basetime;
 	}
 
 	public void on_rewind() {
 		size_t v;
-		this.io_write.write_chars((char[])"seek -15 0\n".data,out v);
+		this.io_write.write_chars((char[])"seek -%d 0\n".printf(this.prefs.jump_time).data,out v);
 		this.io_write.flush();
 		this.timer_show=this.timer_basetime;
 	}

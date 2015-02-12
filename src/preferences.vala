@@ -24,10 +24,12 @@ using Gee;
 public class preferences:Object {
 	
 	public bool force_ffmpeg=false;
+	public int jump_time=10;
 	
 	private Gtk.Builder builder;
 	private Gtk.Dialog mainw;
 	private Gtk.ToggleButton force_ffmpeg_b;
+	private Gtk.Adjustment jump_time_adj;
 	
 	public preferences() {
 		this.read_config();
@@ -35,14 +37,17 @@ public class preferences:Object {
 		this.builder.add_from_file(Path.build_filename(Constants.PKGDATADIR,"settings.ui"));
 		this.mainw=(Gtk.Dialog)this.builder.get_object("settings");
 		this.force_ffmpeg_b=(Gtk.ToggleButton)this.builder.get_object("force_ffmpeg");
+		this.jump_time_adj=(Gtk.Adjustment)this.builder.get_object("jump_time");
 	}
 	
 	public void configure() {
 		this.force_ffmpeg_b.set_active(this.force_ffmpeg);
+		this.jump_time_adj.set_value((double)this.jump_time);
 		this.mainw.show();
 		var retval=this.mainw.run();
 		if (retval==2) {
 			this.force_ffmpeg=this.force_ffmpeg_b.get_active();
+			this.jump_time=(int)this.jump_time_adj.get_value();
 			this.write_config();
 		}
 		this.mainw.hide();
@@ -66,6 +71,14 @@ public class preferences:Object {
 						} else {
 							this.force_ffmpeg=false;
 						}
+						continue;
+					}
+					if(data[0]=="jump_time") {
+						this.jump_time = int.parse(data[1]);
+						if (this.jump_time == 0) {
+							this.jump_time = 10;
+						}
+						continue;
 					}
 				}
 			} catch (Error e) {
@@ -79,7 +92,7 @@ public class preferences:Object {
 			data_file.delete();
 		}
 		var dos = new DataOutputStream (data_file.create (FileCreateFlags.REPLACE_DESTINATION));
-		var data = "force_ffmpeg %s\n".printf(this.force_ffmpeg ? "1" : "0");
+		var data = "force_ffmpeg %s\njump_time %d\n".printf(this.force_ffmpeg ? "1" : "0",this.jump_time);
 		dos.put_string(data);
 	}
 }

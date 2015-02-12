@@ -11,10 +11,13 @@ TabletPlayer is a very simple and lightweight front-end for MPlayer. It just all
 Version 0.5
  * Fixed bug with non-utf8 filenames
  * Allows to set the number of seconds to jump with the FF and RW buttons
+
 Version 0.3
  * Now remembers which videos has been seen and marks them with a bar in its icon, specifying the percentage whatched.
+
 Version 0.2
  * New interface with bigger buttons, easier to use from a touch screen
+
 Version 0.1
  * First public version
 

@@ -52,10 +52,14 @@ public class VideoPlayer : Gtk.Window {
 	
 	public bool timer_func() {
 		size_t v;
-		this.io_write.write_chars((char[])"get_time_length\n".data,out v);
-		this.io_write.write_chars((char[])"get_time_pos\n".data,out v);
-		this.io_write.write_chars((char[])"get_property pause\n".data,out v);
-		this.io_write.flush();
+		try {
+			this.io_write.write_chars((char[])"get_time_length\n".data,out v);
+			this.io_write.write_chars((char[])"get_time_pos\n".data,out v);
+			this.io_write.write_chars((char[])"get_property pause\n".data,out v);
+			this.io_write.flush();
+		} catch (Error e) {
+			return (false);
+		}
 		
 		if (this.paused) {
 			this.timer_show=timer_basetime;
@@ -226,6 +230,7 @@ public class VideoPlayer : Gtk.Window {
 		this.io_write.flush();
 		this.timer_show=this.timer_basetime;
 	}
+
 	public void on_audio() {
 		size_t v;
 		this.io_write.write_chars((char[])"switch_audio\n".data,out v);
@@ -261,4 +266,3 @@ public class VideoPlayer : Gtk.Window {
 		return true;
 	}
 }
-
